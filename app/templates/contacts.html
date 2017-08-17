@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block body %}
+    <div id="wrapper">
+        {% include 'navigation.html' %}
+        {{ super() }}
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        Email List
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <div class="panel panel-primary">
+                                    <div class="panel-heading">
+                                        Email List
+                                    </div>
+                                    <div class="panel-body">
+                                        {% for org_name, vdcs in data.iteritems() recursive %}
+                                            {% for vdc_name, elements in vdcs.items() %}
+                                                {% for metadata in elements.metadata %}
+                                                    <p>
+                                                        <script>
+                                                            var str = ({{ metadata|tojson|safe }});
+                                                            if (str['Note'] != undefined) {
+                                                                document.writeln(str['Note'].replace(/^.*\s([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+).*$/, "$1"));
+                                                            }
+                                                        </script>
+                                                    </p>
+                                                {% endfor %}
+                                            {% endfor %}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

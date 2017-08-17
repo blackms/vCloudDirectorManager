@@ -1,0 +1,16 @@
+[vcloud]
+host: 10.125.224.20
+username: administrator
+password: VMware1!
+name: Lorusso's Lab
+min_spare_ip: 20
+
+[flask]
+bind_ip: 127.0.0.1
+bind_port: 8001
+
+[db]
+hostname: localhost
+username: test
+password: test
+db: localdb

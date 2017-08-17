@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+<head>
+    {% block head %}
+        <title>vCloud Summary</title>
+        <link rel="stylesheet" type="text/css" href={{ url_for('static', filename='css/bootstrap.css') }}>
+        <link rel="stylesheet" type="text/css" href={{ url_for('static', filename='css/sb-admin-2.css') }}>
+        <link rel="stylesheet" type="text/css" href={{ url_for('static', filename='css/metisMenu.css') }}>
+        <link rel="stylesheet" type="text/css" href={{ url_for('static', filename='css/font-awesome.min.css') }}>
+        <link rel="stylesheet" type="text/css" href={{ url_for('static', filename='css/loader.css') }}>
+        <script src={{ url_for('static', filename='js/jquery.min.js') }}></script>
+        <script src={{ url_for('static', filename='js/bootstrap.min.js') }}></script>
+        <script src={{ url_for('static', filename='js/jquery.dataTables.min.js') }}></script>
+        <script src={{ url_for('static', filename='js/dataTables.bootstrap.min.js') }}></script>
+        <script src={{ url_for('static', filename='js/sb-admin-2.js') }}></script>
+        <script src={{ url_for('static', filename='js/metisMenu.min.js') }}></script>
+    {% endblock %}
+</head>
+<body>
+{% block body %}
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">VCD01VCC01</h1>
+        </div>
+    </div>
+{% endblock %}
+</body>
+</html>

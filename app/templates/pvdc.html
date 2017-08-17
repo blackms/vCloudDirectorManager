@@ -1,0 +1,80 @@
+{% extends "layout.html" %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block body %}
+    <div id="wrapper">
+        {% include 'navigation.html' %}
+        {{ super() }}
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        Provider VDC Summary
+                    </div>
+                    <div class="panel-body" id="vdc_container">
+                        <script type="application/javascript">
+                            function create_bar(used, limit, percentage, label) {
+                                return '<div class="progress">' +
+                                        '<div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="' +
+                                        used + '" aria-valuemin="0" aria-valuemax="' + limit +
+                                        '" style="width:' + percentage + '%">' +
+                                        used + '/' + limit + ' ' + label +  ' (' + percentage + '%)' + '</div></div>';
+                            }
+                            $.ajax({
+                                type: "GET",
+                                url: "/get_vdcs_full",
+                                dataType: "json",
+                                success: function (response) {
+                                    console.log(response);
+                                    $.each(response, function (name, object) {
+                                        $("#vdc_container").append('<div class="col-lg-4">' +
+                                                '<div class="panel panel-primary">' +
+                                                '<div class="panel-heading">Provider VDC: ' + name + '</div>' +
+                                                '<div class="panel-body" id="' + name + '_container">' +
+                                                '</div>' +
+                                                '</div>' +
+                                                '</div>');
+                                        var cpu_percentage = Math.round(object['cpu_used'] / object['cpu_limit'] * 100);
+                                        var vdc_container = $("#" + name + "_container");
+                                        $(vdc_container).append('CPU');
+                                        $(vdc_container).append(
+                                                create_bar(
+                                                        object['cpu_used'],
+                                                        object['cpu_limit'],
+                                                        cpu_percentage,
+                                                        'Ghz Used'
+                                                )
+                                        );
+                                        var memory_percentage = Math.round(object['memory_used'] / object['memory_limit'] * 100);
+                                        $(vdc_container).append('Memory');
+                                        $(vdc_container).append(
+                                                create_bar(
+                                                        object['memory_used'],
+                                                        object['memory_limit'],
+                                                        memory_percentage,
+                                                        'GB Used'
+                                                )
+                                        );
+                                        var storage_percentage = Math.round(
+                                                object['storage_used'] / object['storage_limit'] * 100
+                                        );
+                                        $(vdc_container).append('Storage');
+                                        $(vdc_container).append(
+                                                create_bar(
+                                                        object['storage_used'],
+                                                        object['storage_limit'],
+                                                        storage_percentage,
+                                                        'GB Used'
+                                                )
+                                        );
+                                    })
+                                }
+                            });
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

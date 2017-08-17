@@ -1,0 +1,83 @@
+{% extends "layout.html" %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block body %}
+    <div id="wrapper">
+        {% include 'navigation.html' %}
+        {{ super() }}
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        FreeIP Search
+                    </div>
+                    <div class="navbar-default sidebar" role="navigation">
+                        <div class="sidebar-nav navbar-collapse">
+                            <ul class="nav" id="side-menu">
+                                <li>
+                                    <a href="/freeip"><i class="fa fa-dashboard fa-fw"></i>Total Summary</a>
+                                </li>
+                                <li>
+                                    <a href="#"><i class="fa fa-edit fa-fw"></i>Find Free IP</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div id="page-wrapper">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="panel-body">
+                                    <form role="form" action="/give_me_ip" method="POST">
+                                        <div class="form-group">
+                                            <label class="title">How many IPs do you need?</label>
+                                            <input type="text" name="numip" id="numip" class="form-control"
+                                                   placeholder="Int">
+                                        </div>
+                                        <button type="button" class="btn btn-default">Go catch 'em all!</button>
+                                    </form>
+                                </div>
+                                <div class="dataTable_wrapper">
+                                    <table class="table table-striped table-bordered table-hover" id="freeIpTable">
+                                        <thead>
+                                        <tr>
+                                            <th>Search Result</th>
+                                        </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(function () {
+            $('button').click(function () {
+                var numip = $('#numip').val();
+                var freeIpTable = $('#freeIpTable');
+                $.ajax({
+                    url: '/give_me_ip',
+                    data: $('form').serialize(),
+                    type: 'POST',
+                    success: function (response) {
+                        var searchResult = response;
+                        console.log(JSON.parse(searchResult));;
+                        freeIpTable.dataTable().fnDestroy();
+                        freeIpTable.dataTable({
+                            "data": JSON.parse(searchResult),
+                            "paging": false,
+                            "searching": false,
+                            "retrieve": true
+                        });
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}

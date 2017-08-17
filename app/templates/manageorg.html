@@ -1,0 +1,360 @@
+{% extends "layout.html" %}
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" type="text/css" href={{ url_for('static', filename='css/jquery.bootstrap-touchspin.css') }}>
+    <link rel="stylesheet" type="text/css" href={{ url_for('static', filename='css/loading-overlay.css') }}>
+    <link rel="stylesheet" type="text/css" href={{ url_for('static', filename='css/datepicker3.css') }}>
+    <script src={{ url_for('static', filename='js/bootstrap-datepicker.js') }}></script>
+    <script src={{ url_for('static', filename='js/jquery.bootstrap-touchspin.js') }}></script>
+    <script src={{ url_for('static', filename='js/loading-overlay.js') }}></script>
+{% endblock %}
+{% block body %}
+    <div id="overlay" style="display:none">
+        <img id="loading" src="http://bit.ly/pMtW1K">
+        Creating Organization... Please Wait...
+    </div>
+    <div id="wrapper">
+        {% include "navigation.html" %}
+        {{ super() }}
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        Add New Organization
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <form role="form" id="orgForm" method="POST">
+                                <div class="col-lg-12">
+                                    <div class="col-lg-3 col-lg-offset-4">
+                                        <div class="form-group">
+                                            <label for="pvdc">Select Provider VDCS</label>
+                                            <select class="form-control" id="pvdc" name="pvdc">
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label>Username</label>
+                                        <input name="orgUsername" class="form-control"
+                                               placeholder="Enter admin username.">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Password</label>
+                                        <input name="orgAdminPassword" class="form-control"
+                                               placeholder="Enter admin password">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Organization Name</label>
+                                        <input name="orgName" class="form-control"
+                                               placeholder="Enter Organization Name.">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Organization Description</label>
+                                        <input name="orgDescription" class="form-control"
+                                               placeholder="Enter Organization Description.">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Organization Full Name</label>
+                                        <input name="orgFullName" class="form-control"
+                                               placeholder="Enter Organization Full Name">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Order Number</label>
+                                        <input name="orgOrderNumber" class="form-control"
+                                               placeholder="Enter Order Number">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Customer Phone</label>
+                                        <input name="customerPhone" class="form-control"
+                                               placeholder="Enter Customer Phone">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Customer Email</label>
+                                        <input name="customerEmail" class="form-control"
+                                               placeholder="Enter Customer Email">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="picker">Expiration Date</label>
+                                        <input type="text" id="picker" name="ExpirationDate" class="form-control">
+                                    </div>
+
+                                    <div class="col-lg-3">
+                                        <label for="LicWinAmount">Windows Server 2012</label>
+                                        <input name="LicWinAmount" id="LicWinAmount" class="form-control" type="text"
+                                               placeholder="0" value="0">
+                                    </div>
+                                    <div class="col-lg-3">
+                                        <label for="LicSqlStdAmount">SQL Server Standard</label>
+                                        <input name="LicSqlStdAmount" id="LicSqlStdAmount" class="form-control"
+                                               type="text" placeholder="0" value="0">
+                                    </div>
+                                    <div class="col-lg-3">
+                                        <label for="LicSqlEntAmount">SQL Server Enterprise</label>
+                                        <input name="LicSqlEntAmount" id="LicSqlEntAmount" class="form-control"
+                                               type="text" placeholder="0" value="0">
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="ghzAmount">Amount of GHZ</label>
+                                        <input id="ghzAmount" type="text" value="16" name="ghzAmount">
+                                        <script>
+                                            $("input[name='ghzAmount']").TouchSpin({
+                                                min: 16,
+                                                max: 1000,
+                                                step: 1,
+                                                decimals: 0,
+                                                boostat: 5,
+                                                maxboostedstep: 10,
+                                                postfix: 'Ghz'
+                                            });
+                                        </script>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="ramAmount">Amount of RAM</label>
+                                        <input id="ramAmount" type="text" value="32" name="ramAmount">
+                                        <script>
+                                            $("input[name='ramAmount']").TouchSpin({
+                                                min: 32,
+                                                max: 2000,
+                                                step: 1,
+                                                decimals: 0,
+                                                boostat: 5,
+                                                maxboostedstep: 10,
+                                                postfix: 'GB'
+                                            });
+                                        </script>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="nrPlat">Amount of Non Replicated Platinum Storage</label>
+                                        <input id="nrPlat" type="text" value="0" name="nrPlat">
+                                        <script>
+                                            $("input[name='nrPlat']").TouchSpin({
+                                                min: 0,
+                                                max: 10000,
+                                                step: 1,
+                                                decimals: 0,
+                                                boostat: 5,
+                                                maxboostedstep: 10,
+                                                postfix: 'GB'
+                                            });
+                                        </script>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="rPlat">Amount of Replicated Platinum Storage</label>
+                                        <input id="rPlat" type="text" value="0" name="rPlat">
+                                        <script>
+                                            $("input[name='rPlat']").TouchSpin({
+                                                min: 0,
+                                                max: 10000,
+                                                step: 1,
+                                                decimals: 0,
+                                                boostat: 5,
+                                                maxboostedstep: 10,
+                                                postfix: 'GB'
+                                            });
+                                        </script>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="nrGold">Amount of non Replicated Gold Storage</label>
+                                        <input id="nrGold" type="text" value="0" name="nrGold">
+                                        <script>
+                                            $("input[name='nrGold']").TouchSpin({
+                                                min: 0,
+                                                max: 10000,
+                                                step: 1,
+                                                decimals: 0,
+                                                boostat: 5,
+                                                maxboostedstep: 10,
+                                                postfix: 'GB'
+                                            });
+                                        </script>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="rGold">Amount of Replicated Gold Storage</label>
+                                        <input id="rGold" type="text" value="0" name="rGold">
+                                        <script>
+                                            $("input[name='rGold']").TouchSpin({
+                                                min: 0,
+                                                max: 10000,
+                                                step: 1,
+                                                decimals: 0,
+                                                boostat: 5,
+                                                maxboostedstep: 10,
+                                                postfix: 'GB'
+                                            });
+                                        </script>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="nrSilver">Amount of non Replicated Silver Storage</label>
+                                        <input id="nrSilver" type="text" value="0" name="nrSilver">
+                                        <script>
+                                            $("input[name='nrSilver']").TouchSpin({
+                                                min: 0,
+                                                max: 10000,
+                                                step: 1,
+                                                decimals: 0,
+                                                boostat: 5,
+                                                maxboostedstep: 10,
+                                                postfix: 'GB'
+                                            });
+                                        </script>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="rSilver">Amount of Replicated Silver Storage</label>
+                                        <input id="rSilver" type="text" value="0" name="rSilver">
+                                        <script>
+                                            $("input[name='rSilver']").TouchSpin({
+                                                min: 0,
+                                                max: 10000,
+                                                step: 1,
+                                                decimals: 0,
+                                                boostat: 5,
+                                                maxboostedstep: 10,
+                                                postfix: 'GB'
+                                            });
+                                        </script>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="netQuota">Number of Networks</label>
+                                        <input id="netQuota" type="text" value="5" name="netQuota">
+                                        <script>
+                                            $("input[name='netQuota']").TouchSpin({
+                                                min: 5,
+                                                max: 100,
+                                                step: 1,
+                                                decimals: 0,
+                                                boostat: 5,
+                                                maxboostedstep: 10,
+                                                postfix: 'VXLAN'
+                                            });
+                                        </script>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="numberOfIp">Number Of IP</label>
+                                        <input id="numberOfIp" type="text" value="0" name="numberOfIp">
+                                        <script>
+                                            $("input[name='numberOfIp']").TouchSpin({
+                                                min: 4,
+                                                max: 200,
+                                                step: 1,
+                                                decimals: 0,
+                                                boostat: 5,
+                                                maxboostedstep: 10,
+                                                postfix: 'IPs'
+                                            });
+                                        </script>
+                                    </div>
+                                    <div class="form-group-lg">
+                                        <label for="isGatewayEdgePresent">Create Gateway Edge</label>
+                                        <input id="isGatewayEdgePresent" name="isGatewayEdgePresent"
+                                               type="checkbox" value="">
+                                    </div>
+                                    <div class="form-group" id="toggleableField" style="display: none">
+                                        <label for="gatewayEdgeType">GatewayEdge Type</label>
+                                        <select id="gatewayEdgeType" name="gatewayEdgeType"
+                                                class="form-control">
+                                            <option>Compact</option>
+                                            <option>Full</option>
+                                            <option>Full-4</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <button type="button" class="btn btn-primary" id="createOrg">Create Org
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function () {
+            $('#picker').datepicker({
+                format: "dd/mm/yy",
+                weekStart: 1
+            });
+
+            /* Load Provider VDCS */
+            var pvdcSelector = $("#pvdc");
+            pvdcSelector.append($('<option>', {
+                value: 1,
+                text: 'Loading...'
+            }));
+            $.ajax({
+                type: "GET",
+                url: "/getvdcs",
+                dataType: "json",
+                success: function (response) {
+                    console.log("Retrieved.");
+                    $("#pvdc").find("option[value='1']").remove();
+                    console.log(response);
+                    $.each(response, function (n, r) {
+                        $("#pvdc").append($('<option>', {
+                            value: n,
+                            text: 'Provider VDC: ' + n + ' has available Mhz: ' + r
+                        }));
+                    });
+                }
+            });
+
+            $('#createOrg').click(function () {
+                var Data = $('#orgForm').serialize();
+                $("#overlay").css("display", "block");
+                console.log(Data);
+                $.ajax({
+                    type: "POST",
+                    url: "/addorg",
+                    timeout: 480000,
+                    data: Data,
+                    success: function (response) {
+                        alert(response);
+                        $("#overlay").css("display", "none");
+                    },
+                    error: function (xhRequest, ErrorText, thrownError) {
+                        alert("Failed to process data correctly, please try again");
+                        console.log('xhRequest: ' + xhRequest + "\n");
+                        console.log('ErrorText: ' + ErrorText + "\n");
+                        console.log('thrownError: ' + thrownError + "\n");
+                        $("#overlay").css("display", "none");
+                    }
+                });
+            });
+
+            /* BLOCK ghz <-> gb resource ratio. */
+            $("#ghzAmount").on("change", function () {
+                var ramAmountElement = $("#ramAmount");
+                var currentRamVal = $(ramAmountElement).val();
+                var currentGhzVal = $(this).val();
+                if (currentRamVal < (currentGhzVal * 2)) {
+                    $(ramAmountElement).val(currentGhzVal * 2);
+                }
+            });
+            $("#ramAmount").on("change", function () {
+                var ghzAmountElement = $("#ghzAmount");
+                var currentRamVal = $(this).val();
+                var currentGhzVal = $(ghzAmountElement).val();
+                if (currentRamVal < (currentGhzVal * 2)) {
+                    $(this).val(currentGhzVal * 2);
+                }
+            });
+            /* END BLOCK */
+
+            $("#isGatewayEdgePresent").on('change', function () {
+                if ($(this).is(':checked')) {
+                    $("#toggleableField").css('display', 'block');
+                } else {
+                    $("#toggleableField").css('display', 'none');
+                }
+            });
+        })
+        ;
+    </script>
+{% endblock %}

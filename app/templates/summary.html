@@ -1,0 +1,248 @@
+{% extends "layout.html" %}
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" type="text/css" href={{ url_for('static', filename='css/jquery-ui.css') }}>
+    <link rel="stylesheet" type="text/css" href={{ url_for('static', filename='css/jquery-ui.theme.css') }}>
+    <link rel="stylesheet" type="text/css" href={{ url_for('static', filename='css/jquery-ui.structure.css') }}>
+    <link rel="stylesheet" type="text/css" href={{ url_for('static', filename='css/jquery.bootstrap-touchspin.css') }}>
+    <link rel="stylesheet" type="text/css" href={{ url_for('static', filename='css/datepicker3.css') }}>
+    <script src={{ url_for('static', filename='js/jquery-ui.js') }}></script>
+    <script src={{ url_for('static', filename='js/jquery.bootstrap-touchspin.js') }}></script>
+    <script src={{ url_for('static', filename='js/bootstrap-datepicker.js') }}></script>
+    <script src={{ url_for('static', filename='js/summary.js') }}></script>
+{% endblock %}
+{% block body %}
+    <div id="wrapper">
+        {% include "navigation.html" %}
+        {{ super() }}
+        {% if data.keys()|length <= 0 %}
+            <div id="loading" class="loader">Loading...</div>
+        {% endif %}
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        Summary
+                        <div class="btn btn-primary btn-xs pull-right" onclick="reloadData();">
+                            <span class="glyphicon glyphicon-refresh">Reload</span>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <div class="dataTable_wrapper">
+                            <table class="table table-striped table-bordered display compact" cellspacing="0"
+                                   width="100%" id="summary">
+                                <thead>
+                                <tr>
+                                    <th>Org</th>
+                                    <th>Meta</th>
+                                    <th>VDC</th>
+                                    <th>Computing CPU (GHZ)</th>
+                                    <th>Computing Memory (GB)</th>
+                                    <th>Storage (GB)</th>
+                                    <th>Gateways</th>
+                                    <th>Used IPs</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for org_name, vdcs in data.iteritems() recursive %}
+                                    {% for vdc_name, elements in vdcs.items() %}
+                                        <tr id="{{ vdc_name }}">
+                                            <td><h5 id="{{ org_name }}"><span
+                                                    class="label label-default">{{ org_name }}</span></h5></td>
+                                            <td>
+                                                <ul class="list-group">
+                                                    {% for metadata in elements.metadata %}
+                                                        {% for key, value in metadata.items() %}
+                                                            <li id="{{ org_name }}{{ key }}" value="{{ value }}" class="list-group-item">{{ key }}: {{ value }}</li>
+                                                        {% endfor %}
+                                                    {% endfor %}
+                                                </ul>
+                                                <button id="editMetadata" onclick="actionEditMetadata(this);"
+                                                        class="btn btn-xs btn-primary" value="{{ org_name }}">Edit
+                                                    Metadata
+                                                </button>
+                                            </td>
+                                            <td id="vdc">
+                                                <a href="#" onclick="vdcClick(this)"><h5><span
+                                                        class="label label-primary">{{ vdc_name }}</span></h5></a>
+                                            </td>
+                                            <td id="{{ vdc_name }}_ghz"><h4>{{ elements.cpu }}</h4></td>
+                                            <td id="{{ vdc_name }}_ram"><h4>{{ elements.memory }}</h4></td>
+                                            <td id="storages">
+                                                <ul class="list-group">
+                                                    {% for storage in elements.storages %}
+                                                        <li class="list-group-item">
+                                                            {{ storage.name }}: <a data-name='{{ storage.name }}'
+                                                                                   onclick="storageClick(this)"
+                                                                                   href='#'>{{ storage.limit }}</a>
+                                                        </li>
+                                                        <div id="progressbar"></div>
+                                                    {% endfor %}
+                                                </ul>
+                                                <button id="addStorage" onclick="addNewSp(this);"
+                                                        class="btn btn-xs btn-primary">Add Storage
+                                                </button>
+                                            </td>
+                                            <td>
+                                                {% if elements.gateways|length <= 0 %}
+                                                    <div class="alert-warning">No Gateway present</div>
+                                                {% else %}
+                                                    <ul class="list-group">
+                                                        {% for gateway in elements.gateways %}
+                                                            <li class="list-group-item">
+                                                                {{ gateway }}
+                                                            </li>
+                                                        {% endfor %}
+                                                    </ul>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if elements.gateways|length <= 0 %}
+                                                    <div class="alert-warning">No IP Allocated to Gateway</div>
+                                                {% else %}
+                                                    <div class="panel-group" id="accordion">
+                                                        <div class="panel panel-default">
+                                                            <div class="panel-heading">
+                                                                <a data-toggle="collapse" data-parent="#accordion"
+                                                                   href="#collapse{{ vdc_name }}">Show IPs</a>
+                                                            </div>
+                                                            <div id="collapse{{ vdc_name }}"
+                                                                 class="panel-collapse collapse">
+                                                                <div class="panel-body">
+                                                                    {% for ip in elements.usedIp %}
+                                                                        {{ ip }} <br/>
+                                                                    {% endfor %}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="dialog-message" style="display: none;">
+        <form role="form" id="vcdForm" method="POST">
+            <div class="form-group">
+                <label for="allocatedGhz">Change Ghz Allocated</label>
+                <input id="allocatedGhz" type="text" value="0" name="allocatedGhz">
+                <script>
+                    $("input[name='allocatedGhz']").TouchSpin({
+                        min: 16,
+                        max: 200,
+                        step: 1,
+                        decimals: 0,
+                        boostat: 5,
+                        maxboostedstep: 10,
+                        postfix: 'Ghz'
+                    });
+                </script>
+            </div>
+            <div class="form-group">
+                <label for="allocatedRam">Change Ram Allocated</label>
+                <input id="allocatedRam" type="text" value="0" name="allocatedRam">
+                <script>
+                    $("input[name='allocatedRam']").TouchSpin({
+                        min: 32,
+                        max: 1024,
+                        step: 1,
+                        decimals: 0,
+                        boostat: 5,
+                        maxboostedstep: 10,
+                        postfix: 'GB'
+                    });
+                </script>
+            </div>
+        </form>
+        <div id="setNotification"></div>
+    </div>
+
+    <div id="storage-dialog-message" style="display: none;">
+        <form role="form" id="storageForm" method="POST">
+            <div class="form-group">
+                <label for="allocatedStorage">Change Storage Quantity</label>
+                <input id="allocatedStorage" type="text" value="0" name="allocatedStorage">
+                <script>
+                    $("input[name='allocatedStorage']").TouchSpin({
+                        min: 0,
+                        max: 10000,
+                        step: 1,
+                        decimals: 0,
+                        boostat: 5,
+                        maxboostedstep: 10,
+                        postfix: 'GB'
+                    });
+                </script>
+            </div>
+        </form>
+        <div id="storageSetNotification"></div>
+    </div>
+
+    <div id="addStorage-dialog-message" style="display: none;">
+        <form role="form" id="addStorage" method="POST">
+            <div class="form-group" data-href="">
+                <label for="pvdcSp">Select Storage Profile</label>
+                <select class="form-control" id="pvdcSp" name="pvdcSp">
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="newSpGbAmount">Amount of GB</label>
+                <input id="newSpGbAmount" type="text" value="0" name="newSpGbAmount">
+                <script>
+                    $("input[name='newSpGbAmount']").TouchSpin({
+                        min: 10,
+                        max: 10000,
+                        step: 10,
+                        decimals: 0,
+                        boostat: 50,
+                        maxboostedstep: 100,
+                        postfix: 'GB'
+                    });
+                </script>
+            </div>
+        </form>
+        <div id="newSpSetNotification"></div>
+    </div>
+
+    <div id="editMetadata-dialog-message" style="display: none;">
+        <form role="form" id="formEditMetadata" method="POST">
+        </form>
+        <div id="editMetaDataNotification"></div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $('#summary').DataTable({
+                responsive: true
+            });
+
+            /* BLOCK ghz <-> gb resource ratio. */
+            $("#allocatedGhz").on("change", function () {
+                var ramAmountElement = $("#allocatedRam");
+                var currentRamVal = $(ramAmountElement).val();
+                var currentGhzVal = $(this).val();
+                if (currentRamVal < (currentGhzVal * 2)) {
+                    $(ramAmountElement).val(currentGhzVal * 2);
+                }
+            });
+            $("#allocatedRam").on("change", function () {
+                var ghzAmountElement = $("#allocatedGhz");
+                var currentRamVal = $(this).val();
+                var currentGhzVal = $(ghzAmountElement).val();
+                if (currentRamVal < (currentGhzVal * 2)) {
+                    $(this).val(currentGhzVal * 2);
+                }
+            });
+            /* END BLOCK */
+        });
+    </script>
+{% endblock %}

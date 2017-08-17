@@ -1,0 +1,88 @@
+{% extends "layout.html" %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block body %}
+    <div id="wrapper">
+        {% include 'navigation.html' %}
+        {{ super() }}
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        VM Finder
+                    </div>
+                    <div class="panel panel-body">
+                        <div class="col-lg-4">
+                            <div class="panel panel-primary">
+                                <div class="panel-heading">
+                                    Find VM by Name
+                                </div>
+                                <div class="panel-body">
+                                    <form role="form" id="formVm">
+                                        <div class="form-group">
+                                            <label>Name</label>
+                                            <input name="vmname" class="form-control"
+                                                   placeholder="Insert VM Name to Find">
+                                        </div>
+                                        <div class="col-lg-12">
+                                            <button type="button" class="btn btn-primary pull-right" id="findVm">Find
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-8">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Vm Name</th>
+                                        <th>Org Name</th>
+                                        <th>Vdc Name</th>
+                                        <th>vApp</th>
+                                        <th>Storage Profile</th>
+                                        <th>Datastore name</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="appendHere">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="application/javascript">
+        $('#findVm').click(function () {
+            var Data = $('#formVm').serialize();
+            console.log(Data);
+            $.ajax({
+                type: "POST",
+                url: "/findvm",
+                timeout: 480000,
+                data: Data,
+                success: function (response) {
+                    console.log(response);
+                    var appendHere = $("#appendHere");
+                    appendHere.html('');
+                    appendHere.append('<tr>');
+                    appendHere.append('<td>' + response.name + '</td>');
+                    appendHere.append('<td>' + response.org_name + '</td>');
+                    appendHere.append('<td>' + response.vdc_name + '</td>');
+                    appendHere.append('<td>' + response.vapp_name + '</td>');
+                    appendHere.append('<td>' + response.storage_profile + '</td>');
+                    appendHere.append('<td>' + response.datastore_name + '</td>');
+                    appendHere.append('</tr>');
+                },
+                error: function (xhRequest, ErrorText, thrownError) {
+                    alert("Failed to process data correctly, please try again");
+                    console.log('xhRequest: ' + xhRequest + "\n");
+                    console.log('ErrorText: ' + ErrorText + "\n");
+                    console.log('thrownError: ' + thrownError + "\n");
+                }
+            });
+        });
+    </script>
+{% endblock %}
