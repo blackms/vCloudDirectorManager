@@ -5,6 +5,9 @@ details. It also permit to see how many and which ip addresses are in use for ea
 
 FrontEnd is written using jQuery, MetisMenu and sbAdmin, but It will be rewritten using some different JS framework.
 
+## ScreenShots
+![Screen Main](https://github.com/blackms/vCloudDirectorManager/raw/master/src/imgs/screen_main.png "Main Window")
+
 ## Compatibility
 Currently this project support only version 5.5.
 
