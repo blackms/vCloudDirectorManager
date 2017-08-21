@@ -141,3 +141,5 @@ ENV/
 
 *.dump
 config.ini
+
+.idea
