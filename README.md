@@ -6,10 +6,10 @@ details. It also permit to see how many and which ip addresses are in use for ea
 FrontEnd is written using jQuery, MetisMenu and sbAdmin, but It will be rewritten using some different JS framework.
 
 ## ScreenShots
-![Screen Main](https://raw.githubusercontent.com/blackms/vCloudDirectorManager/master/imgs/screen_main.png)
+![Screen Main](https://raw.githubusercontent.com/blackms/vCloudDirectorManager/master/imgs/screen_main.png | width=500)
 
 ## Compatibility
-Currently this project support only version 5.5.
+Up to 8.20
 
 ## Installation
 ### Creating Python Environment
