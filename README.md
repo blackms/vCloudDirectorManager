@@ -6,7 +6,7 @@ details. It also permit to see how many and which ip addresses are in use for ea
 FrontEnd is written using jQuery, MetisMenu and sbAdmin, but It will be rewritten using some different JS framework.
 
 ## ScreenShots
-![](https://raw.githubusercontent.com/blackms/vCloudDirectorManager/master/imgs/screen_main.png | width=100)
+![](https://raw.githubusercontent.com/blackms/vCloudDirectorManager/master/imgs/screen_main.png)
 
 ## Compatibility
 Up to 8.20
