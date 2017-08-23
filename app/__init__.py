@@ -49,32 +49,27 @@ def create_app():
     db_password = config_section_map(Config, 'db')['password']
     db = config_section_map(Config, 'db')['db']
     _app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://{}:{}@{}/{}'.format(db_username, db_password, db_host, db)
+    _app.config.from_object('app.config.DevelopmentConfig')
     _app.logger.debug('Initializing Flask App.')
     # avoid circular dependency
     from app.models import db
     db.init_app(_app)
 
-    def interrupt():
-        poller_thread.cancel()
-
-    def start_poller():
-        # if poller is not running, i start it once
-        _app.logger.debug("Starting Poller Daemon...")
-        global poller_thread
-        if poller_thread is None:
-            global_variable.vcs.login()
-            from core.Collectors import Poller
-            poller_thread = Poller(log_format, global_variable=global_variable)
-            poller_thread.start()
-
-    # Initiate
-    start_poller()
-    # When you kill Flask (SIGTERM), clear the trigger for the next thread
-    atexit.register(interrupt)
     return _app
 
 global_variable = Globals()
 global_variable.app = create_app()
+
+
+def start_poller():
+    # if poller is not running, i start it once
+    global_variable.app.logger.debug("Starting Poller Daemon...")
+    global poller_thread
+    if poller_thread is None:
+        global_variable.vcs.login()
+        from core.Collectors import Poller
+        poller_thread = Poller(log_format, global_variable=global_variable)
+        poller_thread.start()
 
 # read cached data from disk
 try:

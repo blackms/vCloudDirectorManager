@@ -1,3 +1,4 @@
 requests
 flask
 flask-sqlalchemy
+flask-testing
